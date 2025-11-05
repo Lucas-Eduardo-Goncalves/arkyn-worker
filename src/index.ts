@@ -16,7 +16,7 @@ app.get("/health-check", (c) => {
 });
 
 await QueueService.initialize();
-await QueueService.subscribe("ingest-logs");
+await QueueService.subscribe();
 await QueueService.run(async (message, key) => {
   await sendIngestLog.handle(message, key);
 });

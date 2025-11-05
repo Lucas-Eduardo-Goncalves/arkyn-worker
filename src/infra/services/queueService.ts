@@ -1,21 +1,20 @@
+import { formatToEllipsis } from "@arkyn/shared";
 import { Consumer, Kafka } from "kafkajs";
 import { hostname } from "os";
 import { environmentVariables } from "../../main/config/environmentVariables";
-import { formatToEllipsis } from "@arkyn/shared";
 
 const TOPIC = "arkyn-tasks";
 
 class QueueService {
+  static kafka = new Kafka({
+    clientId: `arkyn-worker-${hostname()}`,
+    brokers: [environmentVariables.MICRO_QUEUE_IP],
+  });
+
   static consumer: Consumer;
 
   static async initializeTopic() {
-    const kafka = new Kafka({
-      clientId: `arkyn-worker-${hostname()}`,
-      brokers: [environmentVariables.MICRO_QUEUE_IP],
-    });
-
-    const admin = kafka.admin();
-
+    const admin = this.kafka.admin();
     await admin.connect();
 
     const topics = await admin.listTopics();
@@ -31,24 +30,20 @@ class QueueService {
   }
 
   static async initialize() {
-    const kafka = new Kafka({
-      clientId: `arkyn-worker-${hostname()}`,
-      brokers: [environmentVariables.MICRO_QUEUE_IP],
-    });
-
-    this.consumer = kafka.consumer({ groupId: "arkyn-workers" });
-    await this.consumer.connect();
     await this.initializeTopic();
+    this.consumer = this.kafka.consumer({ groupId: "arkyn-workers" });
+    await this.consumer.connect();
   }
 
   static validateInitialization() {
-    if (!this.consumer)
+    if (!this.consumer) {
       throw new Error("Consumer not initialized. Call initialize() first.");
+    }
   }
 
-  static async subscribe(topic: string) {
+  static async subscribe() {
     this.validateInitialization();
-    await this.consumer.subscribe({ topic, fromBeginning: false });
+    await this.consumer.subscribe({ topic: TOPIC, fromBeginning: false });
   }
 
   static async run(
