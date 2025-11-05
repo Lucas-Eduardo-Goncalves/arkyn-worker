@@ -3,7 +3,7 @@ import { Consumer, Kafka } from "kafkajs";
 import { hostname } from "os";
 import { environmentVariables } from "../../main/config/environmentVariables";
 
-const TOPIC = "ingest-queue";
+const TOPIC = "ingest-logs";
 
 class QueueService {
   static kafka = new Kafka({
