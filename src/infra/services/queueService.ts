@@ -3,8 +3,32 @@ import { hostname } from "os";
 import { environmentVariables } from "../../main/config/environmentVariables";
 import { formatToEllipsis } from "@arkyn/shared";
 
+const TOPIC = "arkyn-tasks";
+
 class QueueService {
   static consumer: Consumer;
+
+  static async initializeTopic() {
+    const kafka = new Kafka({
+      clientId: `arkyn-worker-${hostname()}`,
+      brokers: [environmentVariables.MICRO_QUEUE_IP],
+    });
+
+    const admin = kafka.admin();
+
+    await admin.connect();
+
+    const topics = await admin.listTopics();
+    const hasTopic = topics.includes(TOPIC);
+
+    if (!hasTopic) {
+      await admin.createTopics({
+        topics: [{ topic: TOPIC, numPartitions: 1 }],
+      });
+    }
+
+    await admin.disconnect();
+  }
 
   static async initialize() {
     const kafka = new Kafka({
@@ -14,6 +38,7 @@ class QueueService {
 
     this.consumer = kafka.consumer({ groupId: "arkyn-workers" });
     await this.consumer.connect();
+    await this.initializeTopic();
   }
 
   static validateInitialization() {
