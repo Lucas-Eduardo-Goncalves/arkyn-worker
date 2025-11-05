@@ -1,0 +1,25 @@
+{
+  "name": "@arkyn/ingest",
+  "version": "1.0.0",
+  "type": "module",
+  "license": "Apache-2.0",
+  "author": "Arkyn | Lucas Gonçalves",
+  "description": "Log ingestion and routing API.",
+  "scripts": {
+    "dev": "bun run --hot src/index.ts",
+    "ccm": "./autocommit.sh",
+    "start": "bun run src/index.ts",
+    "typecheck": "tsc"
+  },
+  "dependencies": {
+    "@arkyn/server": "^3.0.1-beta.72",
+    "@arkyn/shared": "^3.0.1-beta.72",
+    "hono": "^4.10.3",
+    "kafkajs": "^2.2.4",
+    "zod": "^4.1.12"
+  },
+  "devDependencies": {
+    "@types/bun": "latest",
+    "typescript": "^5.9.3"
+  }
+}
