@@ -3,7 +3,7 @@ import { Consumer, Kafka } from "kafkajs";
 import { hostname } from "os";
 import { environmentVariables } from "../../main/config/environmentVariables";
 
-const TOPIC = "arkyn-tasks";
+const TOPIC = "ingest-queue";
 
 class QueueService {
   static kafka = new Kafka({
