@@ -1,12 +1,12 @@
 import {
-  IngestLogGatewayDTO,
-  SendIngestLogInput,
-} from "../../domain/gateway/ingestLog";
+  SendLogInput,
+  StorageService,
+} from "../../domain/services/storageService";
 import { microStore } from "../http/microAuth";
 
-class IngestLogGateway implements IngestLogGatewayDTO {
-  async sendIngestLog(
-    body: SendIngestLogInput,
+class ApiStorageService implements StorageService {
+  async sendLog(
+    body: SendLogInput,
     trafficSourceId: string,
     token: string
   ): Promise<void> {
@@ -17,4 +17,4 @@ class IngestLogGateway implements IngestLogGatewayDTO {
   }
 }
 
-export { IngestLogGateway };
+export { ApiStorageService };

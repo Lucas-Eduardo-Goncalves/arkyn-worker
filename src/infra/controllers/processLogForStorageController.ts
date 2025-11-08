@@ -1,19 +1,21 @@
-import { SendIngestLogUseCase } from "../../app/useCases/sendIngestLog";
+import { ProcessLogForStorageUseCase } from "../../app/useCases/processLogForStorageUseCase";
 import { ErrorHandlerAdapter } from "../adapters/errorHandlerAdapter";
 import { SchemaValidatorAdapter } from "../adapters/schemaValidatorAdapter";
-import { ingestLogSchema } from "../schemas/ingestLog";
+import { logSchema } from "../schemas/log";
 
-class SendIngestLogController {
-  constructor(private sendIngestLogUseCase: SendIngestLogUseCase) {}
+class ProcessLogForStorageController {
+  constructor(
+    private processLogForStorageUseCase: ProcessLogForStorageUseCase
+  ) {}
 
   async handle(input: string, queueId: string) {
     const startTime = Date.now();
     try {
       const parsedInput = JSON.parse(input);
-      const schemaValidator = new SchemaValidatorAdapter(ingestLogSchema);
+      const schemaValidator = new SchemaValidatorAdapter(logSchema);
 
       const data = schemaValidator.validate(parsedInput);
-      await this.sendIngestLogUseCase.execute(data);
+      await this.processLogForStorageUseCase.execute(data);
 
       const timestamp = `${Date.now() - startTime}ms`;
       console.log(`\x1b[35mWORKED:${timestamp}ms\x1b[0m => /queue/${queueId}`);
@@ -25,4 +27,4 @@ class SendIngestLogController {
   }
 }
 
-export { SendIngestLogController };
+export { ProcessLogForStorageController };

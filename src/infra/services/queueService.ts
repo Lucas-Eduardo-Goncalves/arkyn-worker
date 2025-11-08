@@ -2,18 +2,24 @@ import { formatToEllipsis } from "@arkyn/shared";
 import { Consumer, Kafka } from "kafkajs";
 import { hostname } from "os";
 import { environmentVariables } from "../../main/config/environmentVariables";
+import { HttpAdapter } from "../adapters/httpAdapter";
 
 const TOPIC = "ingest-logs";
 
 class QueueService {
-  static kafka = new Kafka({
+  private static kafka = new Kafka({
     clientId: `arkyn-worker-${hostname()}`,
     brokers: [environmentVariables.MICRO_QUEUE_IP],
   });
 
-  static consumer: Consumer;
+  private static consumer: Consumer;
 
-  static async initializeTopic() {
+  private static validateInitialization() {
+    if (!this.consumer)
+      throw HttpAdapter.serverError("Consumer not initialized");
+  }
+
+  private static async initializeTopic() {
     const admin = this.kafka.admin();
     await admin.connect();
 
@@ -33,12 +39,6 @@ class QueueService {
     await this.initializeTopic();
     this.consumer = this.kafka.consumer({ groupId: "arkyn-workers" });
     await this.consumer.connect();
-  }
-
-  static validateInitialization() {
-    if (!this.consumer) {
-      throw new Error("Consumer not initialized. Call initialize() first.");
-    }
   }
 
   static async subscribe() {

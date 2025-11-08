@@ -7,7 +7,6 @@
   "description": "Log ingestion and routing API.",
   "scripts": {
     "dev": "bun run --hot src/index.ts",
-    "ccm": "./autocommit.sh",
     "start": "bun run src/index.ts",
     "typecheck": "tsc"
   },

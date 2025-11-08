@@ -3,7 +3,7 @@ import { hostname } from "os";
 import { name, version } from "../package.json";
 import { QueueService } from "./infra/services/queueService";
 import { environmentVariables } from "./main/config/environmentVariables";
-import { sendIngestLog } from "./main/factories/sendIngestLogFactory";
+import { processLogForStorage } from "./main/factories/processLogForStorageFactory";
 import { RouteLogMiddleware } from "./main/middlewares/routeLogMiddleware";
 
 const app = new Hono();
@@ -18,7 +18,7 @@ app.get("/health-check", (c) => {
 await QueueService.initialize();
 await QueueService.subscribe();
 await QueueService.run(async (message, key) => {
-  await sendIngestLog.handle(message, key);
+  await processLogForStorage.handle(message, key);
 });
 
 export default {

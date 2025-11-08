@@ -1,4 +1,4 @@
-type SendIngestLogInput = {
+type SendLogInput = {
   domainUrl: string;
   pathnameUrl: string;
   status: number;
@@ -13,12 +13,12 @@ type SendIngestLogInput = {
   responseBody: string | null;
 };
 
-type IngestLogGatewayDTO = {
-  sendIngestLog: (
-    data: SendIngestLogInput,
+type StorageService = {
+  sendLog: (
+    data: SendLogInput,
     trafficSourceId: string,
     token: string
   ) => Promise<void>;
 };
 
-export { IngestLogGatewayDTO, SendIngestLogInput };
+export { StorageService, SendLogInput };

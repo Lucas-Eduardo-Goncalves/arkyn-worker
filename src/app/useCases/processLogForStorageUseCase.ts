@@ -1,5 +1,5 @@
-import { IngestLogGatewayDTO } from "../../domain/gateway/ingestLog";
 import { HttpMethod } from "../../main/types/httpMethod";
+import { StorageService } from "../../domain/services/storageService";
 
 type InputProps = {
   domainUrl: string;
@@ -18,14 +18,14 @@ type InputProps = {
   elapsedTime: number;
 };
 
-class SendIngestLogUseCase {
-  constructor(private ingestLogGateway: IngestLogGatewayDTO) {}
+class ProcessLogForStorageUseCase {
+  constructor(private storageService: StorageService) {}
 
   async execute(input: InputProps) {
     const { trafficSourceId, token, ...body } = input;
-    await this.ingestLogGateway.sendIngestLog(body, trafficSourceId, token);
+    await this.storageService.sendLog(body, trafficSourceId, token);
     return;
   }
 }
 
-export { SendIngestLogUseCase };
+export { ProcessLogForStorageUseCase };

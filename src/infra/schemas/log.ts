@@ -9,7 +9,7 @@ function validatePathname(pathname: string): boolean {
   }
 }
 
-const ingestLogSchema = z.object({
+const logSchema = z.object({
   domainUrl: z
     .string()
     .min(1, "Domain url is required")
@@ -36,4 +36,4 @@ const ingestLogSchema = z.object({
   responseBody: z.string().nullable(),
 });
 
-export { ingestLogSchema };
+export { logSchema };
