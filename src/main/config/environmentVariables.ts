@@ -9,7 +9,8 @@ class EnvError extends Error {
 
 const environmentVariablesSchema = z.object({
   // Micro services
-  MICRO_STORE_URL: z.string().url(),
+  MICRO_STORE_URL: z.url(),
+  MICRO_STORE_TOKEN: z.string().min(1),
   MICRO_QUEUE_IP: z.string().min(1),
 
   // Configurations

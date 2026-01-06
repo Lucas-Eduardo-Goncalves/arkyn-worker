@@ -2,6 +2,7 @@ import {
   SendLogInput,
   StorageService,
 } from "../../domain/services/storageService";
+import { environmentVariables } from "../../main/config/environmentVariables";
 import { microStore } from "../http/microAuth";
 
 class ApiStorageService implements StorageService {
@@ -12,6 +13,16 @@ class ApiStorageService implements StorageService {
   ): Promise<void> {
     const url = `/http-traffic-records/${trafficSourceId}`;
     await microStore.post(url, { body, token });
+
+    return;
+  }
+
+  async deleteLog(id: string): Promise<void> {
+    const url = `/http-traffic/${id}`;
+
+    await microStore.delete(url, {
+      token: environmentVariables.MICRO_STORE_TOKEN,
+    });
 
     return;
   }

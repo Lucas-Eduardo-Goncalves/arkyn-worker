@@ -19,6 +19,8 @@ type StorageService = {
     trafficSourceId: string,
     token: string
   ) => Promise<void>;
+
+  deleteLog: (id: string) => Promise<void>;
 };
 
 export { StorageService, SendLogInput };

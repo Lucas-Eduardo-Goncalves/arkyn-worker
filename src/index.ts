@@ -3,6 +3,7 @@ import { hostname } from "os";
 import { name, version } from "../package.json";
 import { QueueService } from "./infra/services/queueService";
 import { environmentVariables } from "./main/config/environmentVariables";
+import { deleteLogFromStorage } from "./main/factories/deleteLogFromStorageFactory";
 import { processLogForStorage } from "./main/factories/processLogForStorageFactory";
 import { RouteLogMiddleware } from "./main/middlewares/routeLogMiddleware";
 
@@ -16,10 +17,18 @@ app.get("/health-check", (c) => {
 });
 
 await QueueService.initialize();
-await QueueService.subscribe();
-await QueueService.run(async (message, key) => {
-  await processLogForStorage.handle(message, key);
-});
+
+const ingestConsumer = await QueueService.createConsumer("ingest-logs");
+const deleteConsumer = await QueueService.createConsumer("cleanup-logs");
+
+Promise.all([
+  QueueService.run(ingestConsumer, async (message, key) => {
+    await processLogForStorage.handle(message, key);
+  }),
+  QueueService.run(deleteConsumer, async (logId) => {
+    await deleteLogFromStorage.handle(logId);
+  }),
+]);
 
 export default {
   port: environmentVariables.PORT,
